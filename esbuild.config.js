@@ -53,12 +53,44 @@ function postCssTransformer(code, path) {
   });
 }
 
+const workerEntryPoints = [
+  "vs/language/json/json.worker.js",
+  "vs/language/css/css.worker.js",
+  "vs/language/html/html.worker.js",
+  "vs/language/typescript/ts.worker.js",
+  "vs/editor/editor.worker.js",
+];
+
+build({
+  entryPoints: workerEntryPoints.map(
+    (entry) => `./node_modules/monaco-editor/esm/${entry}`,
+  ),
+  bundle: true,
+  format: "iife",
+  outbase: "./node_modules/monaco-editor/esm/",
+  outdir: "dist",
+});
+
+function build(opts) {
+  esbuild.build(opts).then((result) => {
+    if (result.errors.length > 0) {
+      console.error(result.errors);
+    }
+    if (result.warnings.length > 0) {
+      console.error(result.warnings);
+    }
+  });
+}
+
 const context = await esbuild.context({
   entryPoints: ["plugins/index.js"],
   bundle: true,
-  minify: true,
+  minify: false,
   sourcemap: true,
   outfile: "dist/index.js",
+  loader: {
+    ".ttf": "file",
+  },
 
   plugins: [
     copy({
