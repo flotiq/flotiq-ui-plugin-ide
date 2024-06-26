@@ -15,7 +15,7 @@ export const events = {
   },
   "flotiq.form.field::render": {
     attachEvent: "flotiq.form::add",
-    defaultValue: codeTemplates.render(),
+    defaultValue: codeTemplates.render({ fieldKey: "name" }),
     refreshKey: "name",
     filterCallback: ({ contentType }) => {
       if (!contentType || contentType?.internal || contentType.nonCtdSchema)
@@ -28,12 +28,12 @@ export const events = {
   },
   "flotiq.grid.cell::render": {
     attachEvent: "flotiq.grid::add",
-    defaultValue: codeTemplates.render(),
+    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
     refreshKey: "accessor",
   },
   "flotiq.grid.filter::render": {
     attachEvent: "flotiq.grid::add",
-    defaultValue: codeTemplates.render(),
+    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
     refreshKey: "accessor",
   },
 };
