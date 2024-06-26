@@ -2,6 +2,7 @@ import { editorEventhandler } from "../editor";
 import { editorPreviewEventhandler } from "../preview";
 import pluginInfo from "../../plugin-manifest.json";
 import { defaultAdd } from "..";
+import { onDownload } from "./export-code";
 
 const onModeChange = (refreshes) => {
   const ls = JSON.parse(localStorage[pluginInfo.id]);
@@ -137,7 +138,11 @@ export const handleManageFormEvent = (flotiqEvent) => {
   };
 };
 
-export const handleManageFormAddEvent = (flotiqEvent, refreshes) => {
+export const handleManageFormAddEvent = (
+  flotiqEvent,
+  refreshes,
+  openSchemaModal,
+) => {
   if (flotiqEvent.contentType.id !== pluginInfo.id) return;
 
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;
@@ -153,17 +158,30 @@ export const handleManageFormAddEvent = (flotiqEvent, refreshes) => {
 
   const element = document.createElement("div");
 
+  const exportElement = document.createElement("div");
+  exportElement.textContent = "To download the project ";
+
+  const downloadButton = document.createElement("button");
+  downloadButton.textContent = "click here";
+  downloadButton.style.color = "blue";
+  downloadButton.onclick = () => onDownload(openSchemaModal);
+  downloadButton.type = "button";
+
+  exportElement.appendChild(downloadButton);
+
   const infoElement = document.createElement("div");
   infoElement.textContent =
     "Now the manage mode is custom. If you want to create a manage modal with form ";
 
   const modeButton = document.createElement("button");
   modeButton.textContent = "click here";
+  modeButton.style.color = "green";
   modeButton.onclick = () => onModeChange(refreshes);
   modeButton.type = "button";
 
   infoElement.appendChild(modeButton);
 
+  element.appendChild(exportElement);
   element.appendChild(infoElement);
   element.appendChild(editorElement);
 

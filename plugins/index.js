@@ -70,9 +70,7 @@ const events = {
   },
 };
 
-registerFn(pluginInfo, async (handler) => {
-  getProject()
-
+registerFn(pluginInfo, async (handler, _, global) => {
   if (!localStorage[pluginInfo.id])
     localStorage[pluginInfo.id] = '{"mode":"custom"}';
 
@@ -87,7 +85,11 @@ registerFn(pluginInfo, async (handler) => {
     return handleManageFormEvent(flotiqEvent);
   });
   handler.on("flotiq.form::add", (flotiqEvent) => {
-    return handleManageFormAddEvent(flotiqEvent, modeResreshes);
+    return handleManageFormAddEvent(
+      flotiqEvent,
+      modeResreshes,
+      global.openSchemaModal,
+    );
   });
 
   Object.entries(events).forEach(([eventName, options]) => {
