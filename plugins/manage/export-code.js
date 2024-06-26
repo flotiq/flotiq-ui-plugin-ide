@@ -1,177 +1,111 @@
-/* eslint-disable max-len */
-import pluginInfo from "../../plugin-manifest.json";
 import JSZip from "jszip";
-import Handlebars from "handlebars";
-import defaultHandlerTemplate from "inline:./templates/defaultHandler.hbs";
-import manageFormHandlerTemplate from "inline:./templates/manageFormHandler.hbs";
-import indexTemplate from "inline:./templates/index.hbs";
-import manifestTemplate from "inline:./templates/manifest.hbs";
-
-Handlebars.registerHelper("indent", function (data, indent) {
-  const out = data.replace(/\n/g, "\n" + " ".repeat(indent));
-  return new Handlebars.SafeString(out);
-});
-
-const templates = {
-  index: Handlebars.compile(indexTemplate),
-  defaultHandler: Handlebars.compile(defaultHandlerTemplate),
-  manageFormHandler: Handlebars.compile(manageFormHandlerTemplate),
-  manifest: Handlebars.compile(manifestTemplate),
-};
+import pluginInfo from "../../plugin-manifest.json";
+import { exportTemplates } from "../handlebars";
+import { eventsExportParser } from "../events-config/events";
 
 const repoLink =
   "https://codeload.github.com/flotiq/flotiq-ui-plugin-templates-plain-js/zip/refs/tags/0.1.2";
 
-const parseEventValue = {
-  "flotiq.plugins.manage::form-schema": (schema, mode) => {
-    if (mode !== "form") return;
-    return templates.manageFormHandler({ schema });
-  },
-  "flotiq.plugins.manage::render": (code, mode) => {
-    if (mode === "form") return;
-    return code;
-  },
+const loadZip = async (url) => {
+  const jszip = new JSZip();
+  return fetch(url)
+    .then((res) => res.arrayBuffer())
+    .then((arrayBuffer) => {
+      return jszip.loadAsync(arrayBuffer);
+    })
+    .then((zip) => {
+      return zip;
+    });
 };
 
-export const getProject = async (id, name) => {
-  const repoName = id.replace(/[^a-z0-9]|\s+|\r?\n|\r/gim, "_");
+const removeMatchedFiles = (zip, regExp) => {
+  Object.keys(zip.files)
+    .filter((key) => key.match(regExp))
+    .forEach((key) => {
+      zip.remove(key);
+    });
+};
 
-  try {
-    const url = "https://corsproxy.io/?" + encodeURIComponent(repoLink);
+const renameFiles = async (zip, newProjectName, oldProjectName) => {
+  await Promise.all(
+    Object.values(zip.files)
+      .filter(({ dir }) => !dir)
+      .map(async (fileData) => {
+        const newPath = fileData.name.replace(/[^/]+/, newProjectName);
+        return zip
+          .file(fileData.name)
+          .async("string")
+          .then((fileContent) => {
+            zip.file(newPath, fileContent);
+          });
+      }),
+  );
 
-    const jszip = new JSZip();
+  console.log(oldProjectName, "old project name");
+  zip.remove(oldProjectName);
+};
 
-    const newZip = await fetch(url)
-      .then((res) => res.arrayBuffer())
-      .then((arrayBuffer) => {
-        return jszip.loadAsync(arrayBuffer);
-      })
-      .then((zip) => {
-        return zip;
-      });
+const getHandlersCode = () => {
+  let handlersCode = "";
 
-    const [githubRepoName] = Object.keys(newZip.files)[0].match(/[^/]+/);
+  const ls = JSON.parse(localStorage[pluginInfo.id]) || {};
+  const mode = ls.mode;
 
-    Object.keys(newZip.files)
-      .filter((key) => key.match(/\/plugins\/(?!index).+/))
-      .forEach((key) => {
-        newZip.remove(key);
-      });
+  Object.entries(ls)
+    .filter(([key, value]) => key !== "mode" && value)
+    .forEach(([key, value]) => {
+      let eventCode = value;
 
-    if (githubRepoName !== repoName) {
-      await Promise.all(
-        Object.values(newZip.files)
-          .filter(({ dir }) => !dir)
-          .map(async (fileData) => {
-            const newPath = fileData.name.replace(/[^/]+/, repoName);
+      if (eventsExportParser[key]) {
+        eventCode = eventsExportParser[key](value, mode);
+      }
 
-            return newZip
-              .file(fileData.name)
-              .async("string")
-              .then((fileContent) => {
-                newZip.file(newPath, fileContent);
-                newZip.remove(fileData.name);
-              });
-          }),
-      );
-
-      Object.values(newZip.files)
-        .filter(({ dir }) => dir)
-        .forEach(({ name }) => {
-          if (name.includes(githubRepoName)) newZip.remove(name);
+      if (eventCode)
+        handlersCode += exportTemplates.defaultHandler({
+          eventName: key,
+          eventCode,
         });
+    });
+
+  return handlersCode;
+};
+
+const downloadZip = (zip, repoName) => {
+  const blob = new Blob([zip], { type: "application/json" });
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${repoName}.zip`;
+  a.click();
+};
+
+export const exportProject = async (id, name) => {
+  try {
+    const zip = await loadZip(
+      "https://corsproxy.io/?" + encodeURIComponent(repoLink),
+    );
+
+    removeMatchedFiles(zip, /\/plugins\/(?!index).+/);
+
+    const [githubRepoName] = Object.keys(zip.files)[0].match(/[^/]+/);
+
+    if (githubRepoName !== id) {
+      await renameFiles(zip, id, githubRepoName);
     }
 
-    let pluginCode = "";
+    const indexCode = exportTemplates.index({
+      handlersCode: getHandlersCode(),
+    });
+    zip.file(`${id}/plugins/index.js`, indexCode);
 
-    const ls = JSON.parse(localStorage[pluginInfo.id]) || {};
-    const mode = ls.mode;
+    const newManifest = exportTemplates.manifest({ id, name });
+    zip.file(`${id}/plugin-manifest.json`, newManifest);
 
-    Object.entries(ls)
-      .filter(([key, value]) => key !== "mode" && value)
-      .forEach(([key, value]) => {
-        let eventCode = value;
-
-        if (parseEventValue[key]) {
-          eventCode = parseEventValue[key](value, mode);
-        }
-
-        if (eventCode)
-          pluginCode += templates.defaultHandler({ eventName: key, eventCode });
-      });
-
-    const indexCode = templates.index({ pluginCode });
-    newZip.file(`${repoName}/plugins/index.js`, indexCode);
-
-    const newManifest = templates.manifest({ id, name });
-    newZip.file(`${repoName}/plugin-manifest.json`, newManifest);
-
-    newZip.generateAsync({ type: "uint8array" }).then((file) => {
-      console.log(file);
-      const blob = new Blob([file], { type: "application/json" });
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `${repoName}.zip`;
-      a.click();
+    zip.generateAsync({ type: "uint8array" }).then((file) => {
+      downloadZip(file, id);
     });
   } catch (e) {
     console.log(e);
     console.log("Something occured, try again");
   }
-};
-
-export const onDownload = (openSchemaModal) => {
-  openSchemaModal({
-    title: "Fill information about your plugin",
-    size: "lg",
-    form: {
-      schema: {
-        id: `${pluginInfo.id}.project-settings`,
-        metaDefinition: {
-          order: ["id", "name"],
-          propertiesConfig: {
-            id: {
-              label: "Plugin ID",
-              helpText: "",
-              unique: false,
-              inputType: "text",
-            },
-            name: {
-              label: "Plugin name",
-              helpText: "",
-              unique: false,
-              inputType: "text",
-            },
-          },
-        },
-        schemaDefinition: {
-          additionalProperties: false,
-          required: ["id"],
-          type: "object",
-          allOf: [
-            {
-              $ref: "#/components/schemas/AbstractContentTypeSchemaDefinition",
-            },
-            {
-              type: "object",
-              properties: {
-                id: {
-                  type: "string",
-                  minLength: 1,
-                },
-                name: {
-                  type: "string",
-                  minLength: 1,
-                },
-              },
-            },
-          ],
-        },
-      },
-    },
-  }).then((values) => {
-    if (!values) return;
-    getProject(values.id, values.name);
-  });
 };
