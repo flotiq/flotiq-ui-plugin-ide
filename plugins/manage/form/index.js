@@ -18,7 +18,7 @@ export const handleManageFormAddEvent = (
   refreshes,
   { openSchemaModal },
 ) => {
-  if (flotiqEvent.contentType.id !== pluginInfo.id || !isFormMode()) return;
+  if (flotiqEvent.contentType?.id !== pluginInfo.id || !isFormMode()) return;
 
   const cacheKey = `${pluginInfo.id}-manage-form-add`;
   let element = getCachedElement(cacheKey)?.element;

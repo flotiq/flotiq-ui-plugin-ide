@@ -48,3 +48,18 @@ export const eventsExportParser = {
     return code;
   },
 };
+
+export const eventExtraLibs = {
+  "flotiq.form.sidebar-panel::add": [
+    "const flotiqEvent: FormAddSidebarPanelEvent;",
+  ],
+  "flotiq.form::add": ["const flotiqEvent: FormAddElementEvent;"],
+  "flotiq.form.field::render": ["const flotiqEvent: FormRenderFieldEvent;"],
+  "flotiq.grid::add": ["const flotiqEvent: GridAddElementEvent;"],
+  "flotiq.grid.cell::render": ["const flotiqEvent: GridRenderFieldEvent;"],
+  "flotiq.grid.filter::render": ["const flotiqEvent: GridRenderFilterEvent;"],
+  "flotiq.plugins.manage::render": ["const flotiqEvent: PluginsManageEvent;"],
+  "flotiq.plugins.manage::form-schema": [
+    "const flotiqEvent: PluginsManageFormSchemaEvent;",
+  ],
+};

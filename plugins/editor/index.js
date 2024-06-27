@@ -6,6 +6,8 @@ import {
   removeCachedElement,
 } from "../../common/plugin-element-cache";
 import loader from "@monaco-editor/loader";
+import FlotiqPluginEvents from "inline:../../types/events.d.ts";
+import { eventExtraLibs } from "../events-config/events";
 
 const pluginId = pluginInfo.id;
 
@@ -19,6 +21,49 @@ const onSave = (editorEventName, monacoEditor, refreshes) => {
 
   refreshes.forEach((refresh) => {
     if (refresh) refresh();
+  });
+};
+
+const loadExtraLibs = (monaco, extraLibs) => {
+  const libUri = "ts:filename/events.d.ts";
+  monaco.languages.typescript.javascriptDefaults.addExtraLib(
+    FlotiqPluginEvents,
+    libUri,
+  );
+
+  const importLibUri = "ts:filename/const.d.ts";
+  monaco.languages.typescript.javascriptDefaults.addExtraLib(
+    extraLibs?.join("\n") || "",
+    importLibUri,
+  );
+};
+
+const loadMonaco = async (
+  editorElement,
+  editorEventName,
+  defaultValue,
+  refreshes,
+) => {
+  return loader.init().then((monaco) => {
+    const monacoEditor = monaco.editor.create(editorElement, {
+      value:
+        JSON.parse(localStorage[pluginId])?.[editorEventName] || defaultValue,
+      language: "javascript",
+      theme: "vs-dark",
+      lineNumbers: "off",
+      automaticLayout: true,
+    });
+
+    monacoEditor.onDidBlurEditorText(() => {
+      monaco.languages.typescript.javascriptDefaults.setExtraLibs("");
+    });
+
+    monacoEditor.onDidFocusEditorText(() => {
+      loadExtraLibs(monaco, eventExtraLibs[editorEventName]);
+      monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () =>
+        onSave(editorEventName, monacoEditor, refreshes),
+      );
+    });
   });
 };
 
@@ -49,30 +94,23 @@ export const editorEventhandler = (editorEventName, options, refreshes) => {
       let monacoPromise = getCachedElement(monacoCacheKey);
 
       if (!monacoPromise) {
-        monacoPromise = loader.init().then((monaco) => {
-          const monacoEditor = monaco.editor.create(editorElement, {
-            value:
-              JSON.parse(localStorage[pluginId])?.[editorEventName] ||
-              defaultValue,
-            language: "javascript",
-            theme: "vs-dark",
-            lineNumbers: "off",
-            automaticLayout: true,
-          });
-
-          monacoEditor.onDidFocusEditorText(() => {
-            monacoEditor.addCommand(
-              monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
-              () => onSave(editorEventName, monacoEditor, refreshes),
-            );
-          });
-        });
+        monacoPromise = loadMonaco(
+          editorElement,
+          editorEventName,
+          defaultValue,
+          refreshes,
+        );
 
         addObjectToCache(monacoPromise, monacoCacheKey);
       }
     });
 
-    addElementToCache(element, cacheKey, {}, () => {
+    addElementToCache(element, cacheKey, {}, async () => {
+      const monacoEditorPromise = getCachedElement(monacoCacheKey);
+      if (monacoEditorPromise) {
+        const editor = await getCachedElement(monacoCacheKey);
+        editor?.dispose();
+      }
       removeCachedElement(monacoCacheKey);
     });
   }
