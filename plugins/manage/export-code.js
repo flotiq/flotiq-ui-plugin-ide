@@ -41,33 +41,61 @@ const renameFiles = async (zip, newProjectName, oldProjectName) => {
       }),
   );
 
-  console.log(oldProjectName, "old project name");
   zip.remove(oldProjectName);
 };
 
-const getHandlersCode = () => {
-  let handlersCode = "";
+const parseHandlers = (zip, projectName) => {
+  let handlers = "";
+  let imports = "";
 
   const ls = JSON.parse(localStorage[pluginInfo.id]) || {};
   const mode = ls.mode;
 
   Object.entries(ls)
     .filter(([key, value]) => key !== "mode" && value)
-    .forEach(([key, value]) => {
-      let eventCode = value;
+    .forEach(([eventName, value]) => {
+      const folderName = eventName
+        .replace("flotiq.", "")
+        .replace(/[^\w]+/gm, "-");
+      const handlerName =
+        folderName
+          .split("-")
+          .map((key, index) =>
+            index > 0 ? key.charAt(0).toUpperCase() + key.substring(1) : key,
+          )
+          .join("") + "Handler";
 
-      if (eventsExportParser[key]) {
-        eventCode = eventsExportParser[key](value, mode);
+      let handlerCode = value;
+      let handlerHelpers = "";
+
+      if (eventsExportParser[eventName]) {
+        const { code, helpers } = eventsExportParser[eventName](value, mode);
+        handlerCode = code;
+        handlerHelpers = helpers;
       }
 
-      if (eventCode)
-        handlersCode += exportTemplates.defaultHandler({
-          eventName: key,
-          eventCode,
+      if (handlerCode) {
+        handlers += exportTemplates.handlerOn({
+          eventName,
+          handlerName,
         });
+        imports += exportTemplates.handlerImport({
+          folderName,
+          handlerName,
+        });
+
+        zip.file(
+          `${projectName}/plugins/${folderName}/index.js`,
+          exportTemplates.defaultHandlerCode({
+            handlerName,
+            handlerCode,
+            handlerHelpers,
+          }),
+        );
+      }
     });
 
-  return handlersCode;
+  return { handlers, imports };
 };
 
 const downloadZip = (zip, repoName) => {
@@ -93,8 +121,11 @@ export const exportProject = async (id, name) => {
       await renameFiles(zip, id, githubRepoName);
     }
 
+    const { handlers, imports } = parseHandlers(zip, id);
+
     const indexCode = exportTemplates.index({
-      handlersCode: getHandlersCode(),
+      handlers,
+      imports,
     });
     zip.file(`${id}/plugins/index.js`, indexCode);
 

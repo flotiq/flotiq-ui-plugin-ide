@@ -38,17 +38,6 @@ export const events = {
   },
 };
 
-export const eventsExportParser = {
-  "flotiq.plugins.manage::form-schema": (schema, mode) => {
-    if (mode !== "form") return;
-    return exportTemplates.manageFormHandler({ schema });
-  },
-  "flotiq.plugins.manage::render": (code, mode) => {
-    if (mode === "form") return;
-    return code;
-  },
-};
-
 export const eventsEditorConfig = {
   "flotiq.form.sidebar-panel::add": {
     containerStyles: "right: 10px",
@@ -82,5 +71,19 @@ export const eventsEditorConfig = {
   "flotiq.plugins.manage::form-schema": {
     extraLibs: ["const flotiqEvent: PluginsManageFormSchemaEvent;"],
     defaultValue: codeTemplates.schema(),
+  },
+};
+
+export const eventsExportParser = {
+  "flotiq.plugins.manage::form-schema": (schema, mode) => {
+    if (mode !== "form") return;
+    return {
+      code: exportTemplates.manageFormHandlerCode(),
+      helpers: exportTemplates.manageFormHandlerHelpers({ schema }),
+    };
+  },
+  "flotiq.plugins.manage::render": (code, mode) => {
+    if (mode === "form") return;
+    return { code };
   },
 };
