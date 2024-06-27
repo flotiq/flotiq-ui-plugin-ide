@@ -7,7 +7,7 @@ import {
 } from "../../common/plugin-element-cache";
 import loader from "@monaco-editor/loader";
 import FlotiqPluginEvents from "inline:../../types/events.d.ts";
-import { eventExtraLibs } from "../events-config/events";
+import { eventsEditorConfig } from "../events-config/events";
 
 const pluginId = pluginInfo.id;
 
@@ -42,6 +42,7 @@ const loadMonaco = async (
   editorElement,
   editorEventName,
   defaultValue,
+  extraLibs,
   refreshes,
 ) => {
   return loader.init().then((monaco) => {
@@ -59,7 +60,7 @@ const loadMonaco = async (
     });
 
     monacoEditor.onDidFocusEditorText(() => {
-      loadExtraLibs(monaco, eventExtraLibs[editorEventName]);
+      loadExtraLibs(monaco, extraLibs);
       monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () =>
         onSave(editorEventName, monacoEditor, refreshes),
       );
@@ -67,13 +68,15 @@ const loadMonaco = async (
   });
 };
 
-export const editorEventhandler = (editorEventName, options, refreshes) => {
-  const defaultValue = options.defaultValue || `// Type your code here`;
+export const editorEventhandler = (editorEventName, refreshes) => {
+  const options = eventsEditorConfig[editorEventName] || {};
 
   const cacheKey = `${pluginId}-${editorEventName}-editor`;
   let element = getCachedElement(cacheKey)?.element;
 
   if (!element) {
+    const docsHeading = editorEventName.replace(/[^\w_-]/gm, "").toLowerCase();
+
     element = document.createElement("div");
     element.innerHTML = `
           <details>
@@ -81,8 +84,17 @@ export const editorEventhandler = (editorEventName, options, refreshes) => {
             <div style="position: absolute; background-color: white; height: 25rem;
                   padding: 1rem; z-index: 20; width: 50rem; border:2px solid black; ${options.containerStyles || ""}">
               <h4>Inline Flotiq IDE</h4>
-              <div style="margin-bottom: 1rem">Event: <code>${editorEventName}</code>
-              <div data-editor style="margin-bottom: 2rem; min-height: 300px; max-height: 20rem"></div>
+              <div style="margin-bottom: 1rem">
+                Event: 
+                <code>${editorEventName}</code>
+                <a 
+                  href="https://flotiq.com/docs/panel/PluginsDevelopment/PluginDocs/5_Events/#${docsHeading}"
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  (see documentation)
+                </a>
+                <div data-editor style="margin-bottom: 2rem; min-height: 300px; max-height: 20rem"></div>
             </div>
           </details>
         `;
@@ -97,7 +109,8 @@ export const editorEventhandler = (editorEventName, options, refreshes) => {
         monacoPromise = loadMonaco(
           editorElement,
           editorEventName,
-          defaultValue,
+          options.defaultValue || `// Type your code here`,
+          options.extraLibs,
           refreshes,
         );
 

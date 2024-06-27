@@ -39,7 +39,7 @@ registerFn(pluginInfo, async (handler, _, global) => {
 
       refreshes.set(refreshKey, flotiqEvent.rerender);
 
-      return editorPreviewEventhandler(eventName, flotiqEvent, options);
+      return editorPreviewEventhandler(eventName, flotiqEvent, refreshKey);
     });
 
     handler.on(options.attachEvent, (flotiqEvent) => {
@@ -49,7 +49,7 @@ registerFn(pluginInfo, async (handler, _, global) => {
       );
       if (filtered) return;
 
-      return editorEventhandler(eventName, options, refreshes);
+      return editorEventhandler(eventName, refreshes);
     });
   });
 

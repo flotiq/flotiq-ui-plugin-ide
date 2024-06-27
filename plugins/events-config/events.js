@@ -49,17 +49,38 @@ export const eventsExportParser = {
   },
 };
 
-export const eventExtraLibs = {
-  "flotiq.form.sidebar-panel::add": [
-    "const flotiqEvent: FormAddSidebarPanelEvent;",
-  ],
-  "flotiq.form::add": ["const flotiqEvent: FormAddElementEvent;"],
-  "flotiq.form.field::render": ["const flotiqEvent: FormRenderFieldEvent;"],
-  "flotiq.grid::add": ["const flotiqEvent: GridAddElementEvent;"],
-  "flotiq.grid.cell::render": ["const flotiqEvent: GridRenderFieldEvent;"],
-  "flotiq.grid.filter::render": ["const flotiqEvent: GridRenderFilterEvent;"],
-  "flotiq.plugins.manage::render": ["const flotiqEvent: PluginsManageEvent;"],
-  "flotiq.plugins.manage::form-schema": [
-    "const flotiqEvent: PluginsManageFormSchemaEvent;",
-  ],
+export const eventsEditorConfig = {
+  "flotiq.form.sidebar-panel::add": {
+    containerStyles: "right: 10px",
+    extraLibs: ["const flotiqEvent: FormAddSidebarPanelEvent;"],
+    defaultValue: codeTemplates.add(),
+  },
+  "flotiq.form::add": {
+    extraLibs: ["const flotiqEvent: FormAddElementEvent;"],
+    defaultValue: codeTemplates.add(),
+  },
+  "flotiq.form.field::render": {
+    extraLigs: ["const flotiqEvent: FormRenderFieldEvent;"],
+    defaultValue: codeTemplates.render({ fieldKey: "name" }),
+  },
+  "flotiq.grid::add": {
+    extraLibs: ["const flotiqEvent: GridAddElementEvent;"],
+    defaultValue: codeTemplates.add(),
+  },
+  "flotiq.grid.cell::render": {
+    extraLibs: ["const flotiqEvent: GridRenderFieldEvent;"],
+    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
+  },
+  "flotiq.grid.filter::render": {
+    extraLibs: ["const flotiqEvent: GridRenderFilterEvent;"],
+    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
+  },
+  "flotiq.plugins.manage::render": {
+    extraLibs: ["const flotiqEvent: PluginsManageEvent;"],
+    defaultValue: codeTemplates.add(),
+  },
+  "flotiq.plugins.manage::form-schema": {
+    extraLibs: ["const flotiqEvent: PluginsManageFormSchemaEvent;"],
+    defaultValue: codeTemplates.schema(),
+  },
 };

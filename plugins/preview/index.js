@@ -7,12 +7,8 @@ import {
 export const editorPreviewEventhandler = (
   editorEventName,
   flotiqEvent,
-  options,
+  uniqueKey,
 ) => {
-  const uniqueKey = options.refreshKey
-    ? flotiqEvent[options.refreshKey]
-    : "default";
-
   const cacheKey = `${pluginInfo.id}-${editorEventName}-${uniqueKey}-preview`;
 
   let previewElement = getCachedElement(cacheKey)?.element;
