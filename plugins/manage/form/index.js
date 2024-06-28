@@ -7,6 +7,7 @@ import {
 } from "../../../common/plugin-element-cache";
 import { getDownloadElement } from "../download";
 import { codeTemplates } from "../../handlebars";
+import { getCodeResults } from "../../preview";
 
 const isFormMode = () => {
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;
@@ -59,11 +60,7 @@ export const handleManageFormEvent = (flotiqEvent, client, globals) => {
 
   if (code) {
     try {
-      const fields = new Function("flotiqEvent", "client", "globals", code)(
-        flotiqEvent,
-        client,
-        globals,
-      );
+      const fields = getCodeResults(flotiqEvent, client, globals, code);
 
       if (fields)
         return {

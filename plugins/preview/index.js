@@ -3,6 +3,28 @@ import {
   addElementToCache,
   getCachedElement,
 } from "../../common/plugin-element-cache";
+import * as simulatedCache from "../../common/simulated-cache";
+
+export const getCodeResults = (flotiqEvent, client, globals, code) => {
+  return new Function(
+    "flotiqEvent",
+    "client",
+    "globals",
+    "addElementToCache",
+    "getCachedElement",
+    "registerFn",
+    "pluginInfo",
+    code,
+  )(
+    flotiqEvent,
+    client,
+    globals,
+    simulatedCache.addElementToCache,
+    simulatedCache.getCachedElement,
+    simulatedCache.registerFn,
+    pluginInfo,
+  );
+};
 
 export const editorPreviewEventhandler = (
   editorEventName,
@@ -22,11 +44,7 @@ export const editorPreviewEventhandler = (
   const code = JSON.parse(localStorage[pluginInfo.id])?.[editorEventName];
 
   if (code) {
-    const cbEl = new Function("flotiqEvent", "client", "globals", code)(
-      flotiqEvent,
-      client,
-      globals,
-    );
+    const cbEl = getCodeResults(flotiqEvent, client, globals, code);
 
     if (cbEl) {
       previewElement.innerHTML = "";

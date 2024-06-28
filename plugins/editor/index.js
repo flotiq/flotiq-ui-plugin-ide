@@ -6,11 +6,13 @@ import {
   removeCachedElement,
 } from "../../common/plugin-element-cache";
 import loader from "@monaco-editor/loader";
-import FlotiqPluginEvents from "inline:../../types/events.d.ts";
-import FlotiqApiClient from "inline:../../types/api-client.d.ts";
-import FlotiqGlobals from "inline:../../types/globals.d.ts";
-import FlotiqPluginsRegistry from "inline:../../types/flotiq-registry.d.ts";
+import FlotiqPluginEvents from "inline:../../types/flotiq/events.d.ts";
+import FlotiqApiClient from "inline:../../types/flotiq/api-client.d.ts";
+import FlotiqGlobals from "inline:../../types/flotiq/globals.d.ts";
+import FlotiqPluginsRegistry from "inline:../../types/flotiq/flotiq-registry.d.ts";
+import CommonTypes from "inline:../../types/common.d.ts";
 import { eventsEditorConfig } from "../events-config/events";
+import { clearAllSimulatedCache } from "../../common/simulated-cache";
 
 const pluginId = pluginInfo.id;
 
@@ -25,17 +27,19 @@ const onSave = (editorEventName, monacoEditor, refreshes) => {
   refreshes.forEach((refresh) => {
     if (refresh) refresh();
   });
+
+  clearAllSimulatedCache();
 };
 
 const loadExtraLibs = (monaco, extraLibs) => {
   const libUri = "ts:filename/events.d.ts";
   monaco.languages.typescript.javascriptDefaults.addExtraLib(
     [
+      CommonTypes,
       FlotiqPluginEvents,
       FlotiqApiClient,
       FlotiqGlobals,
       FlotiqPluginsRegistry,
-      "window.FlotiqPluginsRegistry: FlotiqPluginsRegistry;",
       "const client: FlotiqApiClient;",
       "const globals: FlotiqGlobals;",
     ].join("\n"),
@@ -70,6 +74,7 @@ const loadMonaco = async (
     });
 
     monacoEditor.onDidBlurEditorText(() => {
+      onSave(editorEventName, monacoEditor, refreshes);
       monaco.languages.typescript.javascriptDefaults.setExtraLibs("");
     });
 

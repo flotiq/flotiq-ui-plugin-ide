@@ -29,7 +29,7 @@ type ClientResponse = Promise<{ status: number; ok: boolean; body: object }>;
 declare class FlotiqApiClient {
   /**
    * List content types, passing query params as an argument.
-   * Will throw an error witout access to the content type.
+   * Will throw an error witout access to the content types.
    *
    * @property {object} params - query params
    * @example {limit: 20, page: 2}
@@ -37,7 +37,7 @@ declare class FlotiqApiClient {
   getContentTypes(params: object): ClientResponse;
   /**
    * Generate url for media. Use width/height params to generate url for resized image.
-   * Will throw an error witout access to the _media content type.
+   * Will throw an error witout access to the _media content objects.
    *
    * @property {object} mediaData - media data for which URL will be generated
    * @property {number} [height=0] height - desired height
@@ -48,14 +48,14 @@ declare class FlotiqApiClient {
   [key: string]: {
     /**
      * Get single content object, passing id as a argument.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {string} id - content object ID
      */
     get(id: string): ClientResponse;
     /**
      * List content objects, passing query params as an argument.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {object} params - query params
      * @example {limit: 20, page: 2}
@@ -63,14 +63,14 @@ declare class FlotiqApiClient {
     list(params: object): ClientResponse;
     /**
      * Create content object, passing object as an argument.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {object} object - creating object data
      */
     post(object: object): ClientResponse;
     /**
      * Update content object, passing id and object as arguments.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {string} id - content object ID
      * @property {object} object - new object data
@@ -78,7 +78,7 @@ declare class FlotiqApiClient {
     put(id: string, object: object): ClientResponse;
     /**
      * Partialy update content object, passing id and object as arguments.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {string} id - content object ID
      * @property {object} object - object data to update
@@ -86,7 +86,7 @@ declare class FlotiqApiClient {
     patch(id: string, object: object): ClientResponse;
     /**
      * Delete content object, passing id as an argument.
-     * Will throw an error witout access to the content type.
+     * Will throw an error witout access to the content objects of provided type.
      *
      * @property {string} id - content object ID
      */
