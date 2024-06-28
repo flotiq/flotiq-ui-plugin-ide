@@ -6,7 +6,7 @@ import { handleManageEvent } from "./manage/custom";
 import { handleManageFormAddEvent, handleManageFormEvent } from "./manage/form";
 import { editorPreviewEventhandler } from "./preview";
 
-registerFn(pluginInfo, async (handler, _, global) => {
+registerFn(pluginInfo, async (handler, client, globals) => {
   if (!localStorage[pluginInfo.id])
     localStorage[pluginInfo.id] = '{"mode":"custom"}';
 
@@ -15,14 +15,14 @@ registerFn(pluginInfo, async (handler, _, global) => {
   // Manage form handlers
   handler.on("flotiq.plugins.manage::render", (data) => {
     modeResreshes.set("custom", data.rerender);
-    return handleManageEvent(data, modeResreshes, global);
+    return handleManageEvent(modeResreshes, data, client, globals);
   });
   handler.on("flotiq.plugins.manage::form-schema", (data) => {
     modeResreshes.set("form", data.rerender);
-    return handleManageFormEvent(data);
+    return handleManageFormEvent(data, client, globals);
   });
   handler.on("flotiq.form::add", (data) => {
-    return handleManageFormAddEvent(data, modeResreshes, global);
+    return handleManageFormAddEvent(data, modeResreshes, globals);
   });
 
   // Event handlers
@@ -39,7 +39,13 @@ registerFn(pluginInfo, async (handler, _, global) => {
 
       refreshes.set(refreshKey, flotiqEvent.rerender);
 
-      return editorPreviewEventhandler(eventName, flotiqEvent, refreshKey);
+      return editorPreviewEventhandler(
+        eventName,
+        refreshKey,
+        flotiqEvent,
+        client,
+        globals,
+      );
     });
 
     handler.on(options.attachEvent, (flotiqEvent) => {

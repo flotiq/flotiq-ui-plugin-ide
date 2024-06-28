@@ -9,18 +9,14 @@ import {
 import { getDownloadElement } from "../download";
 import { codeTemplates } from "../../handlebars";
 
-export const handleManageEvent = (
-  flotiqEvent,
-  refreshes,
-  { openSchemaModal },
-) => {
+export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;
   if (manageMode !== "custom") return;
 
   const cacheKey = `${pluginInfo.id}-manage-render`;
   let element = getCachedElement(cacheKey)?.element;
 
-  const elementData = { refreshes, openSchemaModal };
+  const elementData = { refreshes, openSchemaModal: globals.openSchemaModal };
 
   if (!element) {
     element = document.createElement("div");
@@ -40,8 +36,10 @@ export const handleManageEvent = (
 
     const previewElement = editorPreviewEventhandler(
       "flotiq.plugins.manage::render",
+      "default",
       flotiqEvent,
-      {},
+      client,
+      globals,
     );
 
     if (previewElement) element.appendChild(previewElement);

@@ -7,6 +7,9 @@ import {
 } from "../../common/plugin-element-cache";
 import loader from "@monaco-editor/loader";
 import FlotiqPluginEvents from "inline:../../types/events.d.ts";
+import FlotiqApiClient from "inline:../../types/api-client.d.ts";
+import FlotiqGlobals from "inline:../../types/globals.d.ts";
+import FlotiqPluginsRegistry from "inline:../../types/flotiq-registry.d.ts";
 import { eventsEditorConfig } from "../events-config/events";
 
 const pluginId = pluginInfo.id;
@@ -27,7 +30,15 @@ const onSave = (editorEventName, monacoEditor, refreshes) => {
 const loadExtraLibs = (monaco, extraLibs) => {
   const libUri = "ts:filename/events.d.ts";
   monaco.languages.typescript.javascriptDefaults.addExtraLib(
-    FlotiqPluginEvents,
+    [
+      FlotiqPluginEvents,
+      FlotiqApiClient,
+      FlotiqGlobals,
+      FlotiqPluginsRegistry,
+      "window.FlotiqPluginsRegistry: FlotiqPluginsRegistry;",
+      "const client: FlotiqApiClient;",
+      "const globals: FlotiqGlobals;",
+    ].join("\n"),
     libUri,
   );
 

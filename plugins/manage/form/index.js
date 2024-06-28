@@ -50,7 +50,7 @@ export const handleManageFormAddEvent = (
   return element;
 };
 
-export const handleManageFormEvent = (flotiqEvent) => {
+export const handleManageFormEvent = (flotiqEvent, client, globals) => {
   if (!isFormMode()) return;
 
   const code = JSON.parse(localStorage[pluginInfo.id])?.[
@@ -59,7 +59,12 @@ export const handleManageFormEvent = (flotiqEvent) => {
 
   if (code) {
     try {
-      const fields = new Function("flotiqEvent", code)(flotiqEvent);
+      const fields = new Function("flotiqEvent", "client", "globals", code)(
+        flotiqEvent,
+        client,
+        globals,
+      );
+
       if (fields)
         return {
           schema: {

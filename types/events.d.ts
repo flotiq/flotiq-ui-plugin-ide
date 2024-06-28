@@ -1,7 +1,7 @@
 /**
  * @interface
  */
-class IFlotiqPluginEvent {
+declare class IFlotiqPluginEvent {
   constructor(initData: any);
 }
 
@@ -32,7 +32,7 @@ class IFlotiqPluginEvent {
  *
  * @property {object} userPlugins User plugins data with settings
  */
-class FormAddElementEvent extends IFlotiqPluginEvent {
+declare class FormAddElementEvent extends IFlotiqPluginEvent {
   contentType: any;
   formik: any;
   onMediaUpload: any;
@@ -67,7 +67,7 @@ class FormAddElementEvent extends IFlotiqPluginEvent {
  *
  * @property {object} userPlugins User plugins data with settings
  */
-class FormAddSidebarPanelEvent extends IFlotiqPluginEvent {
+declare class FormAddSidebarPanelEvent extends IFlotiqPluginEvent {
   contentType: any;
   contentObject: any;
   disabled: any;
@@ -96,7 +96,7 @@ class FormAddSidebarPanelEvent extends IFlotiqPluginEvent {
  *                    with which the submission was triggered.
  * @property {object} errors Errors returned after submitting the form.
  */
-class FormAfterSubmitEvent extends IFlotiqPluginEvent {
+declare class FormAfterSubmitEvent extends IFlotiqPluginEvent {
   success: any;
   contentObject: any;
   errors: any;
@@ -121,7 +121,7 @@ class FormAfterSubmitEvent extends IFlotiqPluginEvent {
  *
  * @property {object} config Field configuration
  */
-class FormConfigFieldEvent extends FormRenderFieldEvent {
+declare class FormConfigFieldEvent extends FormRenderFieldEvent {
   config: any;
 }
 
@@ -162,7 +162,7 @@ class FormConfigFieldEvent extends FormRenderFieldEvent {
  *
  * @property {object} userPlugins User plugins data with settings
  */
-class FormRenderFieldEvent extends IFlotiqPluginEvent {
+declare class FormRenderFieldEvent extends IFlotiqPluginEvent {
   name: any;
   value: any;
   contentType: any;
@@ -200,7 +200,7 @@ class FormRenderFieldEvent extends IFlotiqPluginEvent {
  * @property {object} pagination Pagination returned from API
  * @property {func} handlePageChange Function to change page
  */
-class GridAddElementEvent extends IFlotiqPluginEvent {
+declare class GridAddElementEvent extends IFlotiqPluginEvent {
   contentTypeName: any;
   contentType: any;
 }
@@ -228,7 +228,7 @@ class GridAddElementEvent extends IFlotiqPluginEvent {
  * @property {object} contentType Content type that includes the field
  * @property {string} contentTypeName Content type api name
  */
-class GridRenderFieldEvent extends IFlotiqPluginEvent {
+declare class GridRenderFieldEvent extends IFlotiqPluginEvent {
   accessor: any;
   data: any;
   inputType: any;
@@ -260,7 +260,7 @@ class GridRenderFieldEvent extends IFlotiqPluginEvent {
  * @property {boolean} disabled If the fifilter is disabled
  * @property {object} contentType Content type that includes the field
  */
-class GridRenderFilterEvent extends IFlotiqPluginEvent {
+declare class GridRenderFilterEvent extends IFlotiqPluginEvent {
   accessor: any;
   inputType: any;
   updateFilters: any;
@@ -284,7 +284,7 @@ class GridRenderFilterEvent extends IFlotiqPluginEvent {
  *
  * @property {("pl"|"en")} language Current selected language
  */
-class LanguageChangedEvent extends IFlotiqPluginEvent {
+declare class LanguageChangedEvent extends IFlotiqPluginEvent {
   language: any;
 }
 
@@ -304,7 +304,7 @@ class LanguageChangedEvent extends IFlotiqPluginEvent {
  * @property {object} config Variants crop configuration with default presets thay is array of objects with unique key,
  *                    label that will be shown in the popover menu, name that will be set when no variant name was provided and aspect ratio.
  */
-class MediaConfigCropEvent extends IFlotiqPluginEvent {
+declare class MediaConfigCropEvent extends IFlotiqPluginEvent {
   config: any;
 }
 
@@ -322,7 +322,7 @@ class MediaConfigCropEvent extends IFlotiqPluginEvent {
  * @memberof FlotiqPlugins.Events
  * @name PluginRemovedEvent
  */
-class PluginRemovedEvent extends IFlotiqPluginEvent {}
+declare class PluginRemovedEvent extends IFlotiqPluginEvent {}
 
 /**
  * An event that is fired when plugin settings are updated.
@@ -340,7 +340,7 @@ class PluginRemovedEvent extends IFlotiqPluginEvent {}
  *
  * @property {object} settings Updated settings
  */
-class PluginSettingsChangedEvent extends IFlotiqPluginEvent {
+declare class PluginSettingsChangedEvent extends IFlotiqPluginEvent {
   settings: any;
 }
 
@@ -365,14 +365,14 @@ class PluginSettingsChangedEvent extends IFlotiqPluginEvent {
  * @property {object} modalInstance Settings modal instance with resolve method
  * @property {array} contentTypes Content types data
  */
-class PluginsManageEvent extends IFlotiqPluginEvent {
+declare class PluginsManageEvent extends IFlotiqPluginEvent {
   plugin: any;
   reload: any;
   modalInstance: any;
   contentTypes: any;
 }
 
-class SchemaEventResponse {
+declare class SchemaEventResponse {
   schema: object;
   options: {
     onValidate: () => any;
@@ -410,7 +410,7 @@ class SchemaEventResponse {
  * @property {array} contentTypes Content types data
  * @property {object} modalInstance Settings modal instance with resolve method
  */
-class PluginsManageFormSchemaEvent extends IFlotiqPluginEvent {
+declare class PluginsManageFormSchemaEvent extends IFlotiqPluginEvent {
   plugin: any;
   contentTypes: any;
   modalInstance: any;

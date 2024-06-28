@@ -6,8 +6,10 @@ import {
 
 export const editorPreviewEventhandler = (
   editorEventName,
-  flotiqEvent,
   uniqueKey,
+  flotiqEvent,
+  client,
+  globals,
 ) => {
   const cacheKey = `${pluginInfo.id}-${editorEventName}-${uniqueKey}-preview`;
 
@@ -20,7 +22,11 @@ export const editorPreviewEventhandler = (
   const code = JSON.parse(localStorage[pluginInfo.id])?.[editorEventName];
 
   if (code) {
-    const cbEl = new Function("flotiqEvent", code)(flotiqEvent);
+    const cbEl = new Function("flotiqEvent", "client", "globals", code)(
+      flotiqEvent,
+      client,
+      globals,
+    );
 
     if (cbEl) {
       previewElement.innerHTML = "";
