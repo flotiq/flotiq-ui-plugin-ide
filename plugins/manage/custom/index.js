@@ -7,7 +7,6 @@ import {
   getCachedElement,
 } from "../../../common/plugin-element-cache";
 import { getDownloadElement } from "../download";
-import { codeTemplates } from "../../handlebars";
 
 export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;
@@ -16,19 +15,16 @@ export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
   const cacheKey = `${pluginInfo.id}-manage-render`;
   let element = getCachedElement(cacheKey)?.element;
 
-  const elementData = { refreshes, openSchemaModal: globals.openSchemaModal };
+  const elementData = { refreshes, globals };
 
   if (!element) {
     element = document.createElement("div");
 
-    element.appendChild(getDownloadElement(elementData.openSchemaModal));
+    element.appendChild(getDownloadElement(elementData.globals));
     element.appendChild(getChangeModeElement("custom", elementData.refreshes));
 
     const editorElement = editorEventhandler(
       "flotiq.plugins.manage::render",
-      {
-        defaultValue: codeTemplates.add(),
-      },
       refreshes,
     );
 

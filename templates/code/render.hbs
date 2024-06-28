@@ -1,11 +1,13 @@
-const { contentType, {{fieldKey}} } = flotiqEvent;
+const { contentType, contentObject, {{fieldKey}} } = flotiqEvent;
 
 // Don't override fields other than 'title'
-if (contentType?.name !== "blogposts" || {{fieldKey}} !== 'title') return null;
+if (contentType?.name !== "blogpost" || {{fieldKey}} !== 'title') return null;
 
-const cacheKey = `${pluginInfo.id}-${contentType.name}-{{asTemplateStringVar fieldKey}}`;
+const cacheKey = `${pluginInfo.id}-${contentType.name}-${
+  contentObject?.id || "default"
+}-{{asTemplateStringVar fieldKey}}`;
+
 let element = getCachedElement(cacheKey)?.element;
-
 if (!element) {
   element = document.createElement('div');
   // do your magic!

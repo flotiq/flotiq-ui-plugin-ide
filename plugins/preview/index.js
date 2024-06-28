@@ -5,25 +5,35 @@ import {
 } from "../../common/plugin-element-cache";
 import * as simulatedCache from "../../common/simulated-cache";
 
+let toastRef;
+
 export const getCodeResults = (flotiqEvent, client, globals, code) => {
-  return new Function(
-    "flotiqEvent",
-    "client",
-    "globals",
-    "addElementToCache",
-    "getCachedElement",
-    "registerFn",
-    "pluginInfo",
-    code,
-  )(
-    flotiqEvent,
-    client,
-    globals,
-    simulatedCache.addElementToCache,
-    simulatedCache.getCachedElement,
-    simulatedCache.registerFn,
-    pluginInfo,
-  );
+  try {
+    return new Function(
+      "flotiqEvent",
+      "client",
+      "globals",
+      "addElementToCache",
+      "getCachedElement",
+      "registerFn",
+      "pluginInfo",
+      code,
+    )(
+      flotiqEvent,
+      client,
+      globals,
+      simulatedCache.addElementToCache,
+      simulatedCache.getCachedElement,
+      simulatedCache.registerFn,
+      pluginInfo,
+    );
+  } catch (e) {
+    setTimeout(() => {
+      if (toastRef) globals.toast.remove(toastRef);
+      toastRef = globals.toast.error(e.message);
+    });
+  }
+  return;
 };
 
 export const editorPreviewEventhandler = (

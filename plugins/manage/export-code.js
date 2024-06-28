@@ -107,7 +107,7 @@ const downloadZip = (zip, repoName) => {
   a.click();
 };
 
-export const exportProject = async (id, name) => {
+export const exportProject = async (id, name, toast) => {
   try {
     const zip = await loadZip(
       "https://corsproxy.io/?" + encodeURIComponent(repoLink),
@@ -136,7 +136,6 @@ export const exportProject = async (id, name) => {
       downloadZip(file, id);
     });
   } catch (e) {
-    console.log(e);
-    console.log("Something occured, try again");
+    toast.error("Something occured when exporting project. Try again later.");
   }
 };

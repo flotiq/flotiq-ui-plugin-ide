@@ -6,7 +6,6 @@ import {
   getCachedElement,
 } from "../../../common/plugin-element-cache";
 import { getDownloadElement } from "../download";
-import { codeTemplates } from "../../handlebars";
 import { getCodeResults } from "../../preview";
 
 const isFormMode = () => {
@@ -14,29 +13,22 @@ const isFormMode = () => {
   return manageMode === "form";
 };
 
-export const handleManageFormAddEvent = (
-  flotiqEvent,
-  refreshes,
-  { openSchemaModal },
-) => {
+export const handleManageFormAddEvent = (flotiqEvent, refreshes, globals) => {
   if (flotiqEvent.contentType?.id !== pluginInfo.id || !isFormMode()) return;
 
   const cacheKey = `${pluginInfo.id}-manage-form-add`;
   let element = getCachedElement(cacheKey)?.element;
 
-  const elementData = { refreshes, openSchemaModal };
+  const elementData = { refreshes, globals };
 
   if (!element) {
     element = document.createElement("div");
 
-    element.appendChild(getDownloadElement(elementData.openSchemaModal));
+    element.appendChild(getDownloadElement(elementData.globals));
     element.appendChild(getChangeModeElement("form", elementData.refreshes));
 
     const editorElement = editorEventhandler(
       "flotiq.plugins.manage::form-schema",
-      {
-        defaultValue: codeTemplates.schema(),
-      },
       refreshes,
     );
     element.appendChild(editorElement);
@@ -59,25 +51,21 @@ export const handleManageFormEvent = (flotiqEvent, client, globals) => {
   ];
 
   if (code) {
-    try {
-      const fields = getCodeResults(flotiqEvent, client, globals, code);
+    const fields = getCodeResults(flotiqEvent, client, globals, code);
 
-      if (fields)
-        return {
-          schema: {
-            ...fields,
-            id: pluginInfo.id,
+    if (fields)
+      return {
+        schema: {
+          ...fields,
+          id: pluginInfo.id,
+        },
+        options: {
+          onSubmit: (values) => {
+            console.log(values);
+            return [{ settings: values }, {}];
           },
-          options: {
-            onSubmit: (values) => {
-              console.log(values);
-              return [{ settings: values }, {}];
-            },
-          },
-        };
-    } catch {
-      //
-    }
+        },
+      };
   }
 
   return {

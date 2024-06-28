@@ -1,11 +1,12 @@
 import pluginInfo from "../../plugin-manifest.json";
 import { exportProject } from "./export-code";
 
-const onDownload = (openSchemaModal) => {
+const onDownload = (openSchemaModal, toast) => {
   openSchemaModal({
     title: "Fill information about your plugin",
     size: "lg",
     form: {
+      labels: { ok: "Download" },
       schema: {
         id: `${pluginInfo.id}.project-settings`,
         metaDefinition: {
@@ -53,18 +54,18 @@ const onDownload = (openSchemaModal) => {
     },
   }).then((values) => {
     if (!values) return;
-    exportProject(values.id, values.name);
+    exportProject(values.id, values.name, toast);
   });
 };
 
-export const getDownloadElement = (openSchemaModal) => {
+export const getDownloadElement = ({ openSchemaModal, toast }) => {
   const exportElement = document.createElement("div");
   exportElement.textContent = "To download the project ";
 
   const downloadButton = document.createElement("button");
   downloadButton.textContent = "click here";
   downloadButton.style.color = "blue";
-  downloadButton.onclick = () => onDownload(openSchemaModal);
+  downloadButton.onclick = () => onDownload(openSchemaModal, toast);
   downloadButton.type = "button";
 
   exportElement.appendChild(downloadButton);

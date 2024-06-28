@@ -3,11 +3,11 @@
 {{/if}}
 
 // Don't override fields other than 'title'
-if (contentType?.name !== "blogposts") return;
+if (contentType?.name !== "blogpost") return;
 
 const cacheKey = `${pluginInfo.id}-${contentType.name}-{{{suffix}}}`;
-let element = getCachedElement(cacheKey)?.element;
 
+let element = getCachedElement(cacheKey)?.element;
 if (!element) {
   element = document.createElement("div");
   // do your magic!
