@@ -2,6 +2,6 @@ import { registerFn } from "../common/plugin-element-cache";
 import pluginInfo from "../plugin-manifest.json";
 {{{imports}}}
 
-registerFn(pluginInfo, (handler) => {
+registerFn(pluginInfo, (handler, client, globals) => {
   {{{indent handlers 2}}}
 });

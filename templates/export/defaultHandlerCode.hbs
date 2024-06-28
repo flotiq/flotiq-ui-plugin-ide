@@ -1,7 +1,14 @@
+import pluginInfo from "../../plugin-manifest.json";
+import {
+  addElementToCache,
+  getCachedElement,
+  registerFn,
+} from "../../common/plugin-element-cache";
+
 {{#if handlerHelpers}}
 {{{handlerHelpers}}}
 
 {{/if}}
-export const {{{handlerName}}} = (flotiqEvent) => {
+export const {{{handlerName}}} = (flotiqEvent, client, globals) => {
   {{{indent handlerCode 2}}}
 }

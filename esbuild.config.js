@@ -159,7 +159,7 @@ if (watch) {
 
   const { host, port } = await context.serve({
     servedir: "dist",
-    port: 3050,
+    port: 3070,
   });
 
   const headers = {
@@ -206,7 +206,7 @@ if (watch) {
       // Forward the body of the request to esbuild
       req.pipe(proxyReq, { end: true });
     })
-    .listen(3053);
+    .listen(3073);
 
   console.log(
     `Serving at http://${host.replace(
@@ -215,7 +215,7 @@ if (watch) {
     )}:${port}/index.js and https://${host.replace(
       "0.0.0.0",
       "localhost",
-    )}:${3053}/index.js`,
+    )}:${3073}/index.js`,
   );
 
   console.log(
@@ -225,7 +225,7 @@ if (watch) {
     )}:${port}/plugin-manifest.json and https://${host.replace(
       "0.0.0.0",
       "localhost",
-    )}:${3053}/plugin-manifest.json`,
+    )}:${3073}/plugin-manifest.json`,
   );
 } else {
   await context.rebuild();
