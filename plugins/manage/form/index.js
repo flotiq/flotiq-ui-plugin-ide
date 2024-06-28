@@ -5,7 +5,12 @@ import {
   addElementToCache,
   getCachedElement,
 } from "../../../common/plugin-element-cache";
-import { getDownloadElement } from "../download";
+import {
+  getClearElement,
+  getDownloadElement,
+  getDownloadJsonElement,
+  getUploadJsonElement,
+} from "../download";
 import { getCodeResults } from "../../preview";
 
 const isFormMode = () => {
@@ -13,7 +18,12 @@ const isFormMode = () => {
   return manageMode === "form";
 };
 
-export const handleManageFormAddEvent = (flotiqEvent, refreshes, globals) => {
+export const handleManageFormAddEvent = (
+  flotiqEvent,
+  refreshes,
+  globals,
+  modalInstance,
+) => {
   if (flotiqEvent.contentType?.id !== pluginInfo.id || !isFormMode()) return;
 
   const cacheKey = `${pluginInfo.id}-manage-form-add`;
@@ -24,7 +34,15 @@ export const handleManageFormAddEvent = (flotiqEvent, refreshes, globals) => {
   if (!element) {
     element = document.createElement("div");
 
-    element.appendChild(getDownloadElement(elementData.globals));
+    const buttonBar = document.createElement("div");
+    buttonBar.classList.add("flotiq-ide-button-bar");
+
+    buttonBar.appendChild(getDownloadElement(elementData.globals));
+    buttonBar.appendChild(getDownloadJsonElement());
+    buttonBar.appendChild(getUploadJsonElement(modalInstance.resolve));
+    buttonBar.appendChild(getClearElement(modalInstance.resolve));
+
+    element.appendChild(buttonBar);
     element.appendChild(getChangeModeElement("form", elementData.refreshes));
 
     const editorElement = editorEventhandler(

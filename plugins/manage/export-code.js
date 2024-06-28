@@ -49,7 +49,7 @@ const parseHandlers = (zip, projectName) => {
   let imports = "";
 
   const ls = JSON.parse(localStorage[pluginInfo.id]) || {};
-  const mode = ls.mode;
+  const mode = ls.mode || "custom";
 
   Object.entries(ls)
     .filter(([key, value]) => key !== "mode" && value)

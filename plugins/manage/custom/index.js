@@ -6,11 +6,16 @@ import {
   addElementToCache,
   getCachedElement,
 } from "../../../common/plugin-element-cache";
-import { getDownloadElement } from "../download";
+import {
+  getClearElement,
+  getDownloadElement,
+  getDownloadJsonElement,
+  getUploadJsonElement,
+} from "../download";
 
 export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;
-  if (manageMode !== "custom") return;
+  if (typeof manageMode !== "undefined" && manageMode !== "custom") return;
 
   const cacheKey = `${pluginInfo.id}-manage-render`;
   let element = getCachedElement(cacheKey)?.element;
@@ -19,8 +24,17 @@ export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
 
   if (!element) {
     element = document.createElement("div");
+    const buttonBar = document.createElement("div");
+    buttonBar.classList.add("flotiq-ide-button-bar");
 
-    element.appendChild(getDownloadElement(elementData.globals));
+    buttonBar.appendChild(getDownloadElement(elementData.globals));
+    buttonBar.appendChild(getDownloadJsonElement());
+    buttonBar.appendChild(
+      getUploadJsonElement(flotiqEvent.modalInstance.resolve),
+    );
+    buttonBar.appendChild(getClearElement(flotiqEvent.modalInstance.resolve));
+
+    element.appendChild(buttonBar);
     element.appendChild(getChangeModeElement("custom", elementData.refreshes));
 
     const editorElement = editorEventhandler(

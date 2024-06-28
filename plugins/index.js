@@ -7,23 +7,42 @@ import { handleManageEvent } from "./manage/custom";
 import { handleManageFormAddEvent, handleManageFormEvent } from "./manage/form";
 import { editorPreviewEventhandler } from "./preview";
 
+import cssString from "inline:./style.css";
+
 registerFn(pluginInfo, async (handler, client, globals) => {
+  /**
+   * Add plugin styles to the head of the document
+   */
+  let style = document.getElementById(`${pluginInfo.id}-styles`);
+  if (!style) {
+    style = document.createElement("style");
+    style.id = `${pluginInfo.id}-styles`;
+    document.head.appendChild(style);
+  }
+  style.textContent = cssString;
+
   if (!localStorage[pluginInfo.id])
     localStorage[pluginInfo.id] = '{"mode":"custom"}';
 
   const modeResreshes = new Map();
-
+  let settingsModalInstance = null;
   // Manage form handlers
   handler.on("flotiq.plugins.manage::render", (data) => {
     modeResreshes.set("custom", data.rerender);
     return handleManageEvent(modeResreshes, data, client, globals);
   });
   handler.on("flotiq.plugins.manage::form-schema", (data) => {
+    settingsModalInstance = data.modalInstance;
     modeResreshes.set("form", data.rerender);
     return handleManageFormEvent(data, client, globals);
   });
   handler.on("flotiq.form::add", (data) => {
-    return handleManageFormAddEvent(data, modeResreshes, globals);
+    return handleManageFormAddEvent(
+      data,
+      modeResreshes,
+      globals,
+      settingsModalInstance,
+    );
   });
 
   // Event handlers

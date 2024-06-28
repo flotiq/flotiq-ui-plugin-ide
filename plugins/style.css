@@ -1,0 +1,74 @@
+.flotiq-ide-tooltip {
+  display: inline-block;
+  overflow: visible;
+  position: relative;
+
+  cursor: pointer;
+
+  border: 1px solid gray;
+  border-radius: 5px;
+  padding: 0.25rem 0.5rem;
+}
+
+.flotiq-ide-tooltip--red,
+.flotiq-ide-tooltip--red .flotiq-ide-tooltip__popup {
+  border-color: red;
+}
+
+.flotiq-ide-tooltip--green,
+.flotiq-ide-tooltip--green .flotiq-ide-tooltip__popup {
+  border-color: green;
+}
+.flotiq-ide-tooltip--blue,
+.flotiq-ide-tooltip--blue .flotiq-ide-tooltip__popup {
+  border-color: skyblue;
+}
+
+.mode-dark .flotiq-ide-tooltip__popup {
+  background-color: #111827;
+}
+
+.flotiq-ide-tooltip__popup {
+  display: none;
+
+  position: absolute;
+  width: 300px;
+
+  border: 1px solid gray;
+  border-radius: 5px;
+  background-color: white;
+  padding: 0.5rem 1rem;
+
+  margin-top: 0.5rem;
+  left: 50%;
+
+  transform: translatex(-50%);
+}
+
+.flotiq-ide-tooltip__popup[data-pos="botom left"] {
+  left: 0;
+
+  transform: none;
+}
+
+.flotiq-ide-tooltip__popup[data-pos="botom right"] {
+  left: auto;
+  right: 0;
+
+  transform: none;
+}
+
+.flotiq-ide-tooltip:hover .flotiq-ide-tooltip__popup {
+  display: block;
+}
+
+.flotiq-ide-button-bar {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 1rem;
+
+  position: absolute;
+  top: 1.25rem;
+  right: 4rem;
+}
