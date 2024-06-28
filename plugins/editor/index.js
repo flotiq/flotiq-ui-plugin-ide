@@ -64,6 +64,9 @@ const loadMonaco = async (
       theme: "vs-dark",
       lineNumbers: "off",
       automaticLayout: true,
+      autoIndent: "full",
+      tabSize: 2,
+      detectIndentation: false,
     });
 
     monacoEditor.onDidBlurEditorText(() => {
@@ -72,8 +75,12 @@ const loadMonaco = async (
 
     monacoEditor.onDidFocusEditorText(() => {
       loadExtraLibs(monaco, extraLibs);
-      monacoEditor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS, () =>
-        onSave(editorEventName, monacoEditor, refreshes),
+      monacoEditor.addCommand(
+        monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyS,
+        () => {
+          onSave(editorEventName, monacoEditor, refreshes);
+          monacoEditor.getAction("editor.action.formatDocument").run();
+        },
       );
     });
   });
@@ -86,7 +93,7 @@ export const editorEventhandler = (editorEventName, refreshes) => {
   let element = getCachedElement(cacheKey)?.element;
 
   if (!element) {
-    const docsHeading = editorEventName.replace(/[^\w_-]/gm, "").toLowerCase();
+    const docsHeading = editorEventName.replace(/[^\w-]/gm, "").toLowerCase();
 
     element = document.createElement("div");
     element.innerHTML = `
