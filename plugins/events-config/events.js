@@ -3,19 +3,15 @@ import { codeTemplates, exportTemplates } from "../handlebars";
 export const events = {
   "flotiq.form.sidebar-panel::add": {
     attachEvent: "flotiq.form.sidebar-panel::add",
-    defaultValue: codeTemplates.add(),
-    containerStyles: "right: 10px",
   },
   "flotiq.form::add": {
     attachEvent: "flotiq.form::add",
-    defaultValue: codeTemplates.add(),
     filterCallback: ({ contentType }) => {
       if (!contentType || contentType?.nonCtdSchema) return true;
     },
   },
   "flotiq.form.field::render": {
     attachEvent: "flotiq.form::add",
-    defaultValue: codeTemplates.render({ fieldKey: "name" }),
     refreshKey: "name",
     filterCallback: ({ contentType }) => {
       if (!contentType || contentType?.internal || contentType.nonCtdSchema)
@@ -24,16 +20,13 @@ export const events = {
   },
   "flotiq.grid::add": {
     attachEvent: "flotiq.grid::add",
-    defaultValue: codeTemplates.add(),
   },
   "flotiq.grid.cell::render": {
     attachEvent: "flotiq.grid::add",
-    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
     refreshKey: "accessor",
   },
   "flotiq.grid.filter::render": {
     attachEvent: "flotiq.grid::add",
-    defaultValue: codeTemplates.render({ fieldKey: "accessor" }),
     refreshKey: "accessor",
   },
 };
@@ -42,19 +35,23 @@ export const eventsEditorConfig = {
   "flotiq.form.sidebar-panel::add": {
     containerStyles: "right: 10px",
     extraLibs: ["const flotiqEvent: FormAddSidebarPanelEvent;"],
-    defaultValue: codeTemplates.add(),
+    defaultValue: codeTemplates.add({
+      suffix: '${contentObject?.id || "add"}',
+    }),
   },
   "flotiq.form::add": {
     extraLibs: ["const flotiqEvent: FormAddElementEvent;"],
-    defaultValue: codeTemplates.add(),
+    defaultValue: codeTemplates.add({
+      suffix: '${contentObject?.id || "add"}',
+    }),
   },
   "flotiq.form.field::render": {
-    extraLigs: ["const flotiqEvent: FormRenderFieldEvent;"],
+    extraLibs: ["const flotiqEvent: FormRenderFieldEvent;"],
     defaultValue: codeTemplates.render({ fieldKey: "name" }),
   },
   "flotiq.grid::add": {
     extraLibs: ["const flotiqEvent: GridAddElementEvent;"],
-    defaultValue: codeTemplates.add(),
+    defaultValue: codeTemplates.add({ suffix: "grid", withoutCo: true }),
   },
   "flotiq.grid.cell::render": {
     extraLibs: ["const flotiqEvent: GridRenderFieldEvent;"],
@@ -66,7 +63,7 @@ export const eventsEditorConfig = {
   },
   "flotiq.plugins.manage::render": {
     extraLibs: ["const flotiqEvent: PluginsManageEvent;"],
-    defaultValue: codeTemplates.add(),
+    defaultValue: codeTemplates.manage(),
   },
   "flotiq.plugins.manage::form-schema": {
     extraLibs: ["const flotiqEvent: PluginsManageFormSchemaEvent;"],

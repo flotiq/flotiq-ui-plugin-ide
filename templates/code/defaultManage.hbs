@@ -1,0 +1,11 @@
+const cacheKey = `${pluginInfo.id}-manage-settings`;
+let element = getCachedElement(cacheKey)?.element;
+
+if (!element) {
+  element = document.createElement("div");
+  // do your magic!
+}
+
+addElementToCache(element, cacheKey);
+
+return element;

@@ -1,8 +1,16 @@
-if(flotiqEvent.{{{fieldKey}}} !== 'test_field')
-  return null; // Don't override fields other than 'test_field'
+const { contentType, {{fieldKey}} } = flotiqEvent;
 
-const el = document.createElement('div');
+// Don't override fields other than 'title'
+if (contentType?.name !== "blogposts" || {{fieldKey}} !== 'title') return null;
 
-// do your magic!
+const cacheKey = `${pluginInfo.id}-${contentType.name}-{{asTemplateStringVar fieldKey}}`;
+let element = getCachedElement(cacheKey)?.element;
 
-return el;
+if (!element) {
+  element = document.createElement('div');
+  // do your magic!
+}
+
+addElementToCache(element, cacheKey);
+
+return element;

@@ -11,10 +11,15 @@ import manifestTemplate from "inline:../templates/export/manifest.hbs";
 import addTemplate from "inline:../templates/code/add.hbs";
 import renderTemplate from "inline:../templates/code/render.hbs";
 import schemaTemplate from "inline:../templates/code/defaultSchema.hbs";
+import manageTemplate from "inline:../templates/code/defaultManage.hbs";
 
 Handlebars.registerHelper("indent", function (data, indent) {
   const out = data.replace(/\n/g, "\n" + " ".repeat(indent));
   return new Handlebars.SafeString(out);
+});
+
+Handlebars.registerHelper("asTemplateStringVar", function (data) {
+  return new Handlebars.SafeString("${" + data + "}");
 });
 
 export const exportTemplates = {
@@ -31,6 +36,7 @@ export const codeTemplates = {
   add: Handlebars.compile(addTemplate),
   render: Handlebars.compile(renderTemplate),
   schema: Handlebars.compile(schemaTemplate),
+  manage: Handlebars.compile(manageTemplate),
 };
 
 export default Handlebars;
