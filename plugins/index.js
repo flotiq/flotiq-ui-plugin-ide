@@ -1,3 +1,4 @@
+import { deepReadKeyValue } from "../common/helpers";
 import { registerFn } from "../common/plugin-element-cache";
 import pluginInfo from "../plugin-manifest.json";
 import { editorEventhandler } from "./editor";
@@ -33,8 +34,10 @@ registerFn(pluginInfo, async (handler, client, globals) => {
       const filtered = options.filterCallback?.(flotiqEvent, eventName);
       if (filtered) return;
 
-      const refreshKey = options.refreshKey
-        ? flotiqEvent[options.refreshKey]
+      const refreshKey = options.refreshKeys
+        ? options.refreshKeys
+            .map((refreshKey) => deepReadKeyValue(refreshKey, flotiqEvent))
+            .join("-")
         : "default";
 
       refreshes.set(refreshKey, flotiqEvent.rerender);

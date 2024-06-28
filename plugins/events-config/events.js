@@ -12,7 +12,7 @@ export const events = {
   },
   "flotiq.form.field::render": {
     attachEvent: "flotiq.form::add",
-    refreshKey: "name",
+    refreshKeys: ["name"],
     filterCallback: ({ contentType }) => {
       if (!contentType || contentType?.internal || contentType.nonCtdSchema)
         return true;
@@ -23,11 +23,11 @@ export const events = {
   },
   "flotiq.grid.cell::render": {
     attachEvent: "flotiq.grid::add",
-    refreshKey: "accessor",
+    refreshKeys: ["accessor", "contentObject.id"],
   },
   "flotiq.grid.filter::render": {
     attachEvent: "flotiq.grid::add",
-    refreshKey: "accessor",
+    refreshKeys: ["accessor", "contentObject.id"],
   },
 };
 
