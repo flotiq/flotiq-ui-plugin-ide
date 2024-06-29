@@ -61,6 +61,15 @@ export const handleManageFormAddEvent = (
   return element;
 };
 
+const submitCallback = (values) => {
+  const settings = JSON.parse(localStorage[pluginInfo.id] || "{}");
+  settings.plugin_settings = JSON.stringify(values);
+  localStorage[pluginInfo.id] = JSON.stringify(settings);
+
+  console.log(values);
+  return [{ settings: values }, {}];
+};
+
 export const handleManageFormEvent = (flotiqEvent, client, globals) => {
   if (!isFormMode()) return;
 
@@ -78,10 +87,7 @@ export const handleManageFormEvent = (flotiqEvent, client, globals) => {
           id: pluginInfo.id,
         },
         options: {
-          onSubmit: (values) => {
-            console.log(values);
-            return [{ settings: values }, {}];
-          },
+          onSubmit: submitCallback,
         },
       };
   }
@@ -89,10 +95,7 @@ export const handleManageFormEvent = (flotiqEvent, client, globals) => {
   return {
     schema: { id: pluginInfo.id },
     options: {
-      onSubmit: (values) => {
-        console.log(values);
-        return [{ settings: values }, {}];
-      },
+      onSubmit: submitCallback,
     },
   };
 };

@@ -10,9 +10,8 @@ const cacheKey = `${pluginInfo.id}-${contentType.name}-${
 let element = getCachedElement(cacheKey)?.element;
 if (!element) {
   element = document.createElement('div');
+  addElementToCache(element, cacheKey);
   // do your magic!
 }
-
-addElementToCache(element, cacheKey);
 
 return element;

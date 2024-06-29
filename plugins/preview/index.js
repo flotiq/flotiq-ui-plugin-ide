@@ -9,6 +9,13 @@ let toastRef;
 
 export const getCodeResults = (flotiqEvent, client, globals, code) => {
   try {
+    const overridenGlobals = {
+      ...globals,
+      getPluginSettings: () => {
+        const settings = JSON.parse(localStorage[pluginInfo.id] || "{}");
+        return settings.plugin_settings;
+      },
+    };
     return new Function(
       "flotiqEvent",
       "client",
@@ -21,7 +28,7 @@ export const getCodeResults = (flotiqEvent, client, globals, code) => {
     )(
       flotiqEvent,
       client,
-      globals,
+      overridenGlobals,
       simulatedCache.addElementToCache,
       simulatedCache.getCachedElement,
       simulatedCache.registerFn,

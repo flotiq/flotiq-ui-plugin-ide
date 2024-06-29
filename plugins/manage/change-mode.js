@@ -1,12 +1,11 @@
 import pluginInfo from "../../plugin-manifest.json";
 
-export const onModeChange = (refreshes) => {
+export const onModeChange = (refreshes, value) => {
   const ls = JSON.parse(localStorage[pluginInfo.id]);
-  const currentMode = ls?.mode;
-
+  if (ls.mode === value) return;
   localStorage[pluginInfo.id] = JSON.stringify({
     ...ls,
-    mode: currentMode === "custom" ? "form" : "custom",
+    mode: value,
   });
 
   refreshes.forEach((refresh) => {
@@ -16,14 +15,26 @@ export const onModeChange = (refreshes) => {
 
 export const getChangeModeElement = (mode, refreshes) => {
   const infoElement = document.createElement("div");
-  infoElement.textContent = `Now the manage mode is ${mode}. If you want to create a manage modal with form `;
-
-  const modeButton = document.createElement("button");
-  modeButton.textContent = "click here";
-  modeButton.onclick = () => onModeChange(refreshes);
-  modeButton.type = "button";
-  modeButton.style.color = "green";
-
-  infoElement.appendChild(modeButton);
+  infoElement.classList.add("flotiq-ide-manage-mode");
+  infoElement.innerHTML = `
+    Select how your plugin is going to manage settings:
+    <div>
+      <label>
+        <input type="radio" value="form" ${mode === "form" ? "checked" : ""} name="mode">
+        via Form schema
+      </label>
+      <label>
+        <input type="radio" value="custom" ${mode === "custom" ? "checked" : ""} name="mode">
+        via Custom Html
+      </label>
+    </div>
+  `;
+  infoElement.querySelectorAll("input[name=mode]").forEach((input) => {
+    input.addEventListener("change", () => {
+      if (input.checked) {
+        onModeChange(refreshes, input.value);
+      }
+    });
+  });
   return infoElement;
 };
