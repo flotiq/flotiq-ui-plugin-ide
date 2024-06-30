@@ -140,7 +140,12 @@ export const getUploadJsonElement = (onLodalSettingsChange) => {
         Click here to load previously exported project file.
       </div>
     </button>
-    <input type="file" id="${pluginInfo.id.replaceAll(".", "-")}-file" style="display: none;" />
+    <input 
+      type="file" 
+      accept="application/JSON" 
+      id="${pluginInfo.id.replaceAll(".", "-")}-file" 
+      style="display: none;" 
+    />
   `;
 
   const btn = exportElement.querySelector(

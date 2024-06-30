@@ -52,7 +52,9 @@ const parseHandlers = (zip, projectName) => {
   const mode = ls.mode || "custom";
 
   Object.entries(ls)
-    .filter(([key, value]) => key !== "mode" && value)
+    .filter(
+      ([key, value]) => !["mode", "plugin_settings"].includes(key) && value,
+    )
     .forEach(([eventName, value]) => {
       const folderName = eventName
         .replace("flotiq.", "")
