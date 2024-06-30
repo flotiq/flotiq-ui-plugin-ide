@@ -1,3 +1,6 @@
+/**
+  * Flotiq IDE Tooltip
+  */
 .flotiq-ide-tooltip {
   display: inline-block;
   overflow: visible;
@@ -62,6 +65,9 @@
   display: block;
 }
 
+/**
+  * Flotiq IDE Button Bar for manage modal
+  */
 .flotiq-ide-button-bar {
   display: flex;
   justify-content: flex-start;
@@ -80,6 +86,9 @@
   padding-bottom: 0.5rem;
 }
 
+/**
+  * Flotiq IDE Popup for code editors
+  */
 details.flotiq-ide summary {
   cursor: pointer;
   font-family: monospace;
@@ -87,9 +96,11 @@ details.flotiq-ide summary {
   display: flex;
   align-items: center;
 }
+
 details.flotiq-ide summary:focus {
   outline: none;
 }
+
 details.flotiq-ide summary::before {
   content: "IDE";
   font-weight: bold;
@@ -109,6 +120,7 @@ details.flotiq-ide summary::before {
   border-top-right-radius: 5px;
   margin: 0.1rem 0.3rem;
 }
+
 details.flotiq-ide section {
   position: absolute;
   width: 50rem;
@@ -120,6 +132,7 @@ details.flotiq-ide section {
   margin-top: -0.25rem;
   z-index: 20;
 }
+
 details.flotiq-ide[open] summary::before {
   color: #0083fc;
   border-color: currentcolor;
