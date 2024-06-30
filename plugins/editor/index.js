@@ -91,7 +91,20 @@ const loadMonaco = async (
   });
 };
 
-export const editorEventhandler = (editorEventName, refreshes) => {
+// Close all the details that are not targetDetail.
+function setTargetDetail(targetDetail) {
+  document.querySelectorAll("details.flotiq-ide").forEach((detail) => {
+    if (detail !== targetDetail) {
+      detail.open = false;
+    }
+  });
+}
+
+export const editorEventhandler = (
+  editorEventName,
+  editorAttachEvent,
+  refreshes,
+) => {
   const options = eventsEditorConfig[editorEventName] || {};
 
   const cacheKey = `${pluginId}-${editorEventName}-editor`;
@@ -99,28 +112,39 @@ export const editorEventhandler = (editorEventName, refreshes) => {
 
   if (!element) {
     const docsHeading = editorEventName.replace(/[^\w-]/gm, "").toLowerCase();
-
     element = document.createElement("div");
-    element.innerHTML = `
-          <details>
-            <summary style="cursor: pointer">Inline IDE: <code>${editorEventName}</code></summary>
-            <div style="position: absolute; background-color: white; height: 25rem;
-                  padding: 1rem; z-index: 20; width: 50rem; border:2px solid black; ${options.containerStyles || ""}">
-              <h4>Inline Flotiq IDE</h4>
-              <div style="margin-bottom: 1rem">
-                Event: 
-                <code>${editorEventName}</code>
-                <a 
-                  href="https://flotiq.com/docs/panel/PluginsDevelopment/PluginDocs/5_Events/#${docsHeading}"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  (see documentation)
-                </a>
-                <div data-editor style="margin-bottom: 2rem; min-height: 300px; max-height: 20rem"></div>
-            </div>
-          </details>
-        `;
+
+    if (editorAttachEvent === "flotiq.form::add") {
+      element.addEventListener("flotiq.attached", () => {
+        element.parentNode.style.marginTop = "0";
+      });
+    }
+
+    element.innerHTML = /* html */ `
+      <details class="flotiq-ide">
+        <summary>${editorEventName}</summary>
+        <section style="${options.containerStyles || ""}">
+          <h4>Inline Flotiq IDE</h4>
+          <div style="margin-bottom: 1rem">
+            Event: 
+            <code>${editorEventName}</code>
+            <a 
+              href="https://flotiq.com/docs/panel/PluginsDevelopment/PluginDocs/5_Events/#${docsHeading}"
+              target="_blank"
+              rel="noreferrer"
+            >
+              (see documentation)
+            </a>
+            <div data-editor style="margin-bottom: 2rem; min-height: 300px; max-height: 20rem"></div>
+        </section>
+      </details>
+    `;
+
+    const detailsElement = element.querySelector("details");
+    detailsElement.addEventListener("toggle", () => {
+      if (detailsElement.open) setTargetDetail(detailsElement);
+    });
+
     const editorElement = element.querySelector("[data-editor]");
 
     const monacoCacheKey = `${pluginId}-${editorEventName}-monaco`;

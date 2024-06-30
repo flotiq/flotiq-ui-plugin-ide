@@ -39,6 +39,7 @@ export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
 
     const editorElement = editorEventhandler(
       "flotiq.plugins.manage::render",
+      "flotiq.plugins.manage::render",
       refreshes,
     );
 

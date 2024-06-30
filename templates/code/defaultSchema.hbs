@@ -2,34 +2,34 @@
 * In generated code you will be able to customize the options.
 */
 return {
-    schemaDefinition: {
-      type: "object",
-      allOf: [
-        {
-          $ref: "#/components/schemas/AbstractContentTypeSchemaDefinition",
-        },
-        {
-          type: "object",
-          properties: {
-            text: {
-              type: "string",
-              minLength: 1,
-            },
+  schemaDefinition: {
+    type: "object",
+    allOf: [
+      {
+        $ref: "#/components/schemas/AbstractContentTypeSchemaDefinition",
+      },
+      {
+        type: "object",
+        properties: {
+          text: {
+            type: "string",
+            minLength: 1,
           },
         },
-      ],
-      required: ["text"],
-      additionalProperties: false,
-    },
-    metaDefinition: {
-      order: ["text"],
-      propertiesConfig: {
-        text: {
-          label: "Text",
-          unique: false,
-          helpText: "",
-          inputType: "text",
-        },
+      },
+    ],
+    required: ["text"],
+    additionalProperties: false,
+  },
+  metaDefinition: {
+    order: ["text"],
+    propertiesConfig: {
+      text: {
+        label: "Text",
+        unique: false,
+        helpText: "",
+        inputType: "text",
       },
     },
-  };
+  },
+};

@@ -77,7 +77,7 @@ registerFn(pluginInfo, async (handler, client, globals) => {
       );
       if (filtered) return;
 
-      return editorEventhandler(eventName, refreshes);
+      return editorEventhandler(eventName, options.attachEvent, refreshes);
     });
   });
 

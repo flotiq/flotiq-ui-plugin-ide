@@ -47,6 +47,7 @@ export const handleManageFormAddEvent = (
 
     const editorElement = editorEventhandler(
       "flotiq.plugins.manage::form-schema",
+      "flotiq.plugins.manage::form-schema",
       refreshes,
     );
     element.appendChild(editorElement);

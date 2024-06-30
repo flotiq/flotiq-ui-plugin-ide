@@ -79,3 +79,48 @@
   margin-bottom: 1rem;
   padding-bottom: 0.5rem;
 }
+
+details.flotiq-ide summary {
+  cursor: pointer;
+  font-family: monospace;
+  list-style-type: "";
+  display: flex;
+  align-items: center;
+}
+details.flotiq-ide summary:focus {
+  outline: none;
+}
+details.flotiq-ide summary::before {
+  content: "IDE";
+  font-weight: bold;
+  font-family:
+    Trebuchet MS,
+    Lucida Grande,
+    Lucida Sans Unicode,
+    Lucida Sans,
+    Tahoma,
+    sans-serif;
+  color: #8ea1b8;
+  border: 1px solid transparent;
+  padding: 0.15rem 0.25rem;
+  display: inline-block;
+  vertical-align: middle;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  margin: 0.1rem 0.3rem;
+}
+details.flotiq-ide section {
+  position: absolute;
+  width: 50rem;
+  padding: 1rem 1.25rem;
+  border-radius: 8px;
+  background: white;
+  color: black;
+  border: 2px solid #0083fc;
+  margin-top: -0.25rem;
+  z-index: 20;
+}
+details.flotiq-ide[open] summary::before {
+  color: #0083fc;
+  border-color: currentcolor;
+}
