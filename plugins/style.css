@@ -22,12 +22,18 @@
 .flotiq-ide-tooltip--green .flotiq-ide-tooltip__popup {
   border-color: green;
 }
+
 .flotiq-ide-tooltip--blue,
 .flotiq-ide-tooltip--blue .flotiq-ide-tooltip__popup {
   border-color: skyblue;
 }
 
-.mode-dark .flotiq-ide-tooltip__popup {
+.flotiq-ide-tooltip--borderless,
+.flotiq-ide-tooltip--borderless .flotiq-ide-tooltip__popup {
+  border: none;
+}
+
+.mode-dark .flotiq-ide-tooltip__popup:not([data-color="white"]) {
   background-color: #111827;
 }
 
@@ -57,6 +63,14 @@
 .flotiq-ide-tooltip__popup[data-pos="botom right"] {
   left: auto;
   right: 0;
+
+  transform: none;
+}
+
+.flotiq-ide-tooltip__popup[data-pos="top right"] {
+  right: 0;
+  bottom: 100%;
+  left: auto;
 
   transform: none;
 }
@@ -91,10 +105,14 @@
   */
 details.flotiq-ide summary {
   cursor: pointer;
-  font-family: monospace;
   list-style-type: "";
   display: flex;
   align-items: center;
+  gap: 0.25rem;
+}
+
+.mode-dark details.flotiq-ide summary {
+  color: #e5e7eb;
 }
 
 details.flotiq-ide summary:focus {
@@ -124,16 +142,28 @@ details.flotiq-ide summary::before {
 details.flotiq-ide section {
   position: absolute;
   width: 50rem;
-  padding: 1rem 1.25rem;
-  border-radius: 8px;
-  background: white;
+  border-radius: 10px;
   color: black;
-  border: 2px solid #0083fc;
   margin-top: -0.25rem;
   z-index: 20;
+  border: 2px solid #0083fc;
 }
 
 details.flotiq-ide[open] summary::before {
   color: #0083fc;
   border-color: currentcolor;
+}
+
+details .flotiq-ide-default-code__button {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.75rem;
+}
+
+details .flotiq-ide-default-code__icon {
+  display: block;
+  content: url("../images/refresh-icon.svg");
+  width: 2rem;
+  height: 2rem;
+  padding: 0.5rem;
 }

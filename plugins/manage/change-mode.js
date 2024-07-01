@@ -23,7 +23,7 @@ export const getChangeModeElement = (mode, refreshes) => {
         <input type="radio" value="form" ${mode === "form" ? "checked" : ""} name="mode">
         via Form schema
       </label>
-      <label>
+      <label style="margin-left: 0.25rem;">
         <input type="radio" value="custom" ${mode === "custom" ? "checked" : ""} name="mode">
         via Custom Html
       </label>

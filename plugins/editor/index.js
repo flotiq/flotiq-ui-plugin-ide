@@ -24,7 +24,7 @@ const onSave = (editorEventName, monacoEditor, refreshes) => {
     [editorEventName]: monacoEditor.getValue(),
   });
 
-  refreshes.forEach((refresh) => {
+  refreshes?.forEach((refresh) => {
     if (refresh) refresh();
   });
 
@@ -61,9 +61,10 @@ const loadMonaco = async (
   refreshes,
 ) => {
   return loader.init().then((monaco) => {
+    const value = JSON.parse(localStorage[pluginId])?.[editorEventName];
+
     const monacoEditor = monaco.editor.create(editorElement, {
-      value:
-        JSON.parse(localStorage[pluginId])?.[editorEventName] || defaultValue,
+      value: typeof value === "undefined" ? defaultValue : value,
       language: "javascript",
       theme: "vs-dark",
       lineNumbers: "off",
@@ -88,17 +89,24 @@ const loadMonaco = async (
         },
       );
     });
+    return monacoEditor;
   });
 };
 
 // Close all the details that are not targetDetail.
-function setTargetDetail(targetDetail) {
+const setTargetDetail = (targetDetail) => {
   document.querySelectorAll("details.flotiq-ide").forEach((detail) => {
     if (detail !== targetDetail) {
       detail.open = false;
     }
   });
-}
+};
+
+const resetToDefaultValue = (editor, defaultValue) => {
+  if (!editor) return;
+  editor.setValue(defaultValue);
+  editor.focus();
+};
 
 export const editorEventhandler = (
   editorEventName,
@@ -122,20 +130,28 @@ export const editorEventhandler = (
 
     element.innerHTML = /* html */ `
       <details class="flotiq-ide">
-        <summary>${editorEventName}</summary>
+        <summary>
+          <code>${editorEventName}</code>
+          <a
+            href="https://flotiq.com/docs/panel/PluginsDevelopment/PluginDocs/5_Events/#${docsHeading}"
+            target="_blank"
+            rel="noreferrer"
+          >
+            (docs)
+          </a> 
+        </summary>
         <section style="${options.containerStyles || ""}">
-          <h4>Inline Flotiq IDE</h4>
-          <div style="margin-bottom: 1rem">
-            Event: 
-            <code>${editorEventName}</code>
-            <a 
-              href="https://flotiq.com/docs/panel/PluginsDevelopment/PluginDocs/5_Events/#${docsHeading}"
-              target="_blank"
-              rel="noreferrer"
-            >
-              (see documentation)
-            </a>
-            <div data-editor style="margin-bottom: 2rem; min-height: 300px; max-height: 20rem"></div>
+          <div data-editor style="min-height: 400px;"></div>
+          <button 
+            data-default-code
+            type="button" 
+            class="flotiq-ide-default-code__button flotiq-ide-tooltip flotiq-ide-tooltip--borderless" 
+          >
+            <div class="flotiq-ide-default-code__icon"></div>
+            <div class="flotiq-ide-tooltip__popup" data-pos="top right" data-color="white">
+              Click here to reset to default value    
+            </div>
+          </button>
         </section>
       </details>
     `;
@@ -146,6 +162,7 @@ export const editorEventhandler = (
     });
 
     const editorElement = element.querySelector("[data-editor]");
+    const editorRefreshElement = element.querySelector("[data-default-code]");
 
     const monacoCacheKey = `${pluginId}-${editorEventName}-monaco`;
 
@@ -160,6 +177,12 @@ export const editorEventhandler = (
           options.extraLibs,
           refreshes,
         );
+
+        monacoPromise.then((editor) => {
+          editorRefreshElement.onclick = () => {
+            resetToDefaultValue(editor, options.defaultValue);
+          };
+        });
 
         addObjectToCache(monacoPromise, monacoCacheKey);
       }
