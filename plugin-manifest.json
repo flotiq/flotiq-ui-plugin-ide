@@ -1,7 +1,7 @@
 {
   "id": "flotiq.ide",
   "name": "IDE",
-  "description": "This plugin allows you to see where you can find currently existing events and code faster with this plugin.",
+  "description": "This plugin streamlines your workflow by identifying existing events that impact the Flotiq UI, allowing you to code more efficiently.",
   "version": "1.0.0",
   "repository": "https://github.com/SalvadorDalia/flotiq-ui-plugin-ide",
   "url": "https://localhost:3073/index.js",
