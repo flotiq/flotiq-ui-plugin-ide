@@ -11,7 +11,7 @@ import {
   getDownloadElement,
   getDownloadJsonElement,
   getUploadJsonElement,
-} from "../download";
+} from "../buttons";
 
 export const handleManageEvent = (refreshes, flotiqEvent, client, globals) => {
   const manageMode = JSON.parse(localStorage[pluginInfo.id])?.mode;

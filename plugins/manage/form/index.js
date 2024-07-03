@@ -10,7 +10,7 @@ import {
   getDownloadElement,
   getDownloadJsonElement,
   getUploadJsonElement,
-} from "../download";
+} from "../buttons";
 import { getCodeResults } from "../../preview";
 
 const isFormMode = () => {
